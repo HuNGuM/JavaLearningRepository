@@ -1,0 +1,9 @@
+package com.example.demo.dto;
+
+public class PoolDTO {
+    private Long id;
+    private String name;
+    private String location;
+    private int lanes;
+    private String schedule;
+}
