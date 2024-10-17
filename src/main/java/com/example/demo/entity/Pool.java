@@ -17,10 +17,8 @@ public class Pool {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotNull
     @Column(nullable = false, length = 100)
     private String name;
-    @NotNull
     @Column(nullable = false, unique = true, length = 100)
 
     private String location;
@@ -28,7 +26,6 @@ public class Pool {
     @Column(nullable = false, length = 100)
 
     private int lanes;
-    @NotNull
     @Column(nullable = false, length = 100)
 
     private String schedule;
