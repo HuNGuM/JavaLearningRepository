@@ -43,8 +43,7 @@ dependencies {
 	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.3'
 	// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
 	implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.29.2'
-	// https://mvnrepository.com/artifact/com.h2database/h2
-	testImplementation group: 'com.h2database', name: 'h2', version: '2.3.232'
+
 }
 
 tasks.named('test') {
