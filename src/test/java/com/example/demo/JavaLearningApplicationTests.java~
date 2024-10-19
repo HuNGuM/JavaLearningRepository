@@ -69,43 +69,7 @@ class JavaLearningApplicationTests {
         verify(poolRepository).save(pool);
         verify(poolMapper).toDTO(pool);
     }
-    @Test
-    void update() {
-        Long poolId = 1L;
 
-        // Настраиваем моки для существующего пула
-        when(poolRepository.findById(poolId)).thenReturn(Optional.of(pool));
-        when(poolMapper.toEntity(poolDTO)).thenReturn(pool);
-        when(poolRepository.save(pool)).thenReturn(pool);
-        when(poolMapper.toDTO(pool)).thenReturn(poolDTO);
-
-        // Обновляем пул
-        PoolDTO updatedPool = poolService.update(poolDTO, poolId);
-
-        // Проверяем, что обновленный пул соответствует ожидаемым данным
-        assertEquals(poolDTO.getName(), updatedPool.getName());
-        assertEquals(poolDTO.getLocation(), updatedPool.getLocation());
-        assertEquals(poolDTO.getLanes(), updatedPool.getLanes());
-        assertEquals(poolDTO.getSchedule(), updatedPool.getSchedule());
-
-        // Проверяем взаимодействие с моками
-        verify(poolRepository).findById(poolId);
-        verify(poolMapper).toEntity(poolDTO);
-        verify(poolRepository).save(pool);
-        verify(poolMapper).toDTO(pool);
-    }
-
-    @Test
-    void updatePoolNotFound() {
-        Long poolId = 1L;
-        when(poolRepository.findById(poolId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            poolService.update(poolDTO, poolId);
-        });
-
-        assertEquals("Not found pool with id: " + poolId, exception.getMessage());
-    }
 
 
     @Test
