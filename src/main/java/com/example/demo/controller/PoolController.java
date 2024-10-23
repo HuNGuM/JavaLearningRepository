@@ -50,10 +50,12 @@ public class PoolController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PoolDTO> getPoolById(@PathVariable Long id) {
-        Optional<PoolDTO> poolDTOOptional = Optional.ofNullable(poolService.findById(id));
-        return poolDTOOptional
-                .map(pool -> new ResponseEntity<>(pool, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            PoolDTO pool = poolService.findById(id);
+            return new ResponseEntity<>(pool, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
     @GetMapping
     public ResponseEntity<List<PoolDTO>> getAllPools() {

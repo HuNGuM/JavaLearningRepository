@@ -26,7 +26,7 @@
   </component>
   <component name="AmplicodePersistenceUnitSettings">
     <persistence-units>
-      <persistence-unit moduleName="com.example.demo.main" name="Default">
+      <persistence-unit moduleName="com.example.demo.main" name="Default" defaultIncludeChangeLogFile="src/main/resources/db/changelog/db.changelog-master.xml">
         <packages>
           <package value="com.example.demo" />
         </packages>

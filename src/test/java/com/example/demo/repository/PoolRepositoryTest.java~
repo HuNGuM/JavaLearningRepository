@@ -1,0 +1,68 @@
+package com.example.demo.repository;
+
+import com.example.demo.entity.Pool;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.test.context.jdbc.Sql;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DataJdbcTest
+public class PoolRepositoryTest {
+
+    @Autowired
+    private PoolRepository poolRepository;
+
+    @BeforeEach
+    public void setUp() {
+        poolRepository.deleteAll();
+    }
+
+    @Test
+    public void testSaveAndFindById() {
+        Pool pool = new Pool(null, "Main Pool", "Downtown", 6, "08:00 - 20:00");
+
+        Pool savedPool = poolRepository.save(pool);
+
+        assertThat(savedPool).isNotNull();
+        assertThat(savedPool.getId()).isNotNull();
+        Pool foundPool = poolRepository.findById(savedPool.getId()).orElse(null);
+        assertThat(foundPool).isNotNull();
+        assertThat(foundPool.getName()).isEqualTo("Main Pool");
+    }
+
+    @Test
+    public void testUpdate() {
+        Pool pool = new Pool(null, "Main Pool", "Downtown", 6, "08:00 - 20:00");
+        Pool savedPool = poolRepository.save(pool);
+        savedPool.setName("Updated Pool");
+
+        Pool updatedPool = poolRepository.save(savedPool);
+
+        assertThat(updatedPool.getName()).isEqualTo("Updated Pool");
+    }
+
+    @Test
+    public void testDelete() {
+        Pool pool = new Pool(null, "Main Pool", "Downtown", 6, "08:00 - 20:00");
+        Pool savedPool = poolRepository.save(pool);
+
+        poolRepository.delete(savedPool);
+
+        assertThat(poolRepository.findById(savedPool.getId())).isEmpty();
+    }
+
+    @Test
+    public void testFindAll() {
+        Pool pool1 = new Pool(null, "Main Pool", "Downtown", 6, "08:00 - 20:00");
+        Pool pool2 = new Pool(null, "Training Pool", "Uptown", 4, "09:00 - 18:00");
+        poolRepository.save(pool1);
+        poolRepository.save(pool2);
+
+        Iterable<Pool> pools = poolRepository.findAll();
+
+        assertThat(pools).hasSize(2);
+    }
+}
