@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.PoolDTO;
-import com.example.demo.entity.Pool;
 import com.example.demo.mapper.PoolMapper;
+import com.example.demo.entity.Pool;
 import com.example.demo.repository.PoolRepository;
 import com.example.demo.service.PoolService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class PoolServiceImpl implements PoolService {
     @Override
     public PoolDTO create(PoolDTO poolDTO) {
         Pool pool = poolMapper.toEntity(poolDTO);
-        poolRepository.save(pool);
-        return poolMapper.toDTO(pool);
+        Pool poolFromRepository = poolRepository.save(pool);
+        return poolMapper.toDTO(poolFromRepository);
     }
 
     @Override

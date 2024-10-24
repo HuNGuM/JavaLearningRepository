@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.util.Objects;
+
 public class PoolDTO {
     private Long id;
     private String name;
@@ -56,5 +58,17 @@ public class PoolDTO {
         this.location = location;
         this.lanes = lanes;
         this.schedule = schedule;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PoolDTO poolDTO)) return false;
+        return lanes == poolDTO.lanes && Objects.equals(id, poolDTO.id) && Objects.equals(name, poolDTO.name) && Objects.equals(location, poolDTO.location) && Objects.equals(schedule, poolDTO.schedule);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, location, lanes, schedule);
     }
 }
