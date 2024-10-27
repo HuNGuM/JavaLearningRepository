@@ -21,17 +21,20 @@ public class Employee {
     private String fio;
     @Column(name = "role_id", length = 90, nullable = false)
     private int role_id;
+    @Column(name = "login", length = 90, nullable = false, unique = true)
+    private String login;
+    @Column(name = "password", length = 90, nullable = false)
+    private String password;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Employee employee)) return false;
-        return role_id == employee.role_id && Objects.equals(id, employee.id) && Objects.equals(fio, employee.fio);
+    public Employee() {
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, fio, role_id);
+    public Employee(Long id, String fio, int role_id, String login, String password) {
+        this.id = id;
+        this.fio = fio;
+        this.role_id = role_id;
+        this.login = login;
+        this.password = password;
     }
 
     public Long getId() {
@@ -58,12 +61,31 @@ public class Employee {
         this.role_id = role_id;
     }
 
-    public Employee() {
+    public String getLogin() {
+        return login;
     }
 
-    public Employee(Long id, String fio, int role_id) {
-        this.id = id;
-        this.fio = fio;
-        this.role_id = role_id;
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employee employee)) return false;
+        return role_id == employee.role_id && Objects.equals(id, employee.id) && Objects.equals(fio, employee.fio) && Objects.equals(login, employee.login) && Objects.equals(password, employee.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fio, role_id, login, password);
     }
 }

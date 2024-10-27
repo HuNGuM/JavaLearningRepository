@@ -35,6 +35,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Not found emloyee with id: " + id));
         existingEmployee.setFio(employeeDTO.getFio());
         existingEmployee.setRole_id(employeeDTO.getRole_id());
+        existingEmployee.setLogin(employeeDTO.getLogin());
+        existingEmployee.setPassword(employeeDTO.getPassword());
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
         return employeeMapper.toDTO(updatedEmployee);
     }
