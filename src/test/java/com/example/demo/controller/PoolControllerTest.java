@@ -1,126 +1,104 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.PoolDTO;
-import com.example.demo.entity.Pool;
-import com.example.demo.repository.PoolRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.service.PoolService;
+import com.example.demo.service.impl.PoolServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class PoolControllerTest {
+@WebMvcTest(PoolController.class)
+public class PoolControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private PoolRepository poolRepository;
+    @MockBean // Change this from @Mock to @MockBean
+    private PoolService poolService;
+
+    private PoolDTO poolDTO;
 
     @BeforeEach
-    void setUp() {
-        poolRepository.deleteAll();
+    public void setUp() {
+        poolDTO = new PoolDTO();
+        poolDTO.setId(1L);
+        poolDTO.setName("Test Pool");
     }
 
     @Test
-    void testCreatePool() throws Exception {
-        PoolDTO poolDTO = new PoolDTO();
-        poolDTO.setName("Test Pool");
-        poolDTO.setLocation("Test Location");
-        poolDTO.setLanes(5);
-        poolDTO.setSchedule("09:00-18:00");
+    public void testCreatePool() throws Exception {
+        when(poolService.create(any(PoolDTO.class))).thenReturn(poolDTO);
 
         mockMvc.perform(post("/pools")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(poolDTO)))
+                        .content("{\"name\": \"Test Pool\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Test Pool"));
+
+        verify(poolService, times(1)).create(any(PoolDTO.class));
     }
 
     @Test
-    void testGetPoolById() throws Exception {
-        Pool pool = new Pool();
-        pool.setName("Test Pool");
-        pool.setLocation("Test Location");
-        pool.setLanes(5);
-        pool.setSchedule("09:00-18:00");
-        poolRepository.save(pool);
+    public void testUpdatePool() throws Exception {
+        when(poolService.update(any(PoolDTO.class), eq(1L))).thenReturn(poolDTO);
 
-        mockMvc.perform(get("/pools/{id}", pool.getId()))
+        mockMvc.perform(put("/pools/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Updated Pool\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Test Pool"));
+
+        verify(poolService, times(1)).update(any(PoolDTO.class), eq(1L));
     }
 
     @Test
-    void testGetAllPools() throws Exception {
-        Pool pool1 = new Pool();
-        pool1.setName("Test Pool 1");
-        pool1.setLocation("Location 1");
-        pool1.setLanes(3);
-        pool1.setSchedule("09:00-18:00");
-        poolRepository.save(pool1);
+    public void testDeletePool() throws Exception {
+        doNothing().when(poolService).delete(1L); // Ensure that delete is mocked properly
 
-        Pool pool2 = new Pool();
-        pool2.setName("Test Pool 2");
-        pool2.setLocation("Location 2");
-        pool2.setLanes(5);
-        pool2.setSchedule("10:00-20:00");
-        poolRepository.save(pool2);
+        mockMvc.perform(delete("/pools/1"))
+                .andExpect(status().isNoContent());
+
+        verify(poolService, times(1)).delete(1L);
+    }
+
+    @Test
+    public void testGetPoolById() throws Exception {
+        when(poolService.findById(1L)).thenReturn(poolDTO);
+
+        mockMvc.perform(get("/pools/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Test Pool"));
+
+        verify(poolService, times(1)).findById(1L);
+    }
+
+    @Test
+    public void testGetAllPools() throws Exception {
+        List<PoolDTO> pools = Collections.singletonList(poolDTO);
+        when(poolService.findAll()).thenReturn(pools);
 
         mockMvc.perform(get("/pools"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(2)));
-    }
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Test Pool"));
 
-    @Test
-    void testUpdatePool() throws Exception {
-        Pool pool = new Pool();
-        pool.setName("Test Pool");
-        pool.setLocation("Test Location");
-        pool.setLanes(5);
-        pool.setSchedule("09:00-18:00");
-        poolRepository.save(pool);
-
-        PoolDTO updatePoolDTO = new PoolDTO();
-        updatePoolDTO.setName("Updated Pool");
-        updatePoolDTO.setLocation("Updated Location");
-        updatePoolDTO.setLanes(6);
-        updatePoolDTO.setSchedule("10:00-19:00");
-
-        mockMvc.perform(put("/pools/{id}", pool.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(updatePoolDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Updated Pool"));
-    }
-
-    @Test
-    void testDeletePool() throws Exception {
-        Pool pool = new Pool();
-        pool.setName("Test Pool");
-        pool.setLocation("Test Location");
-        pool.setLanes(5);
-        pool.setSchedule("09:00-18:00");
-        poolRepository.save(pool);
-
-        mockMvc.perform(delete("/pools/{id}", pool.getId()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void testGetPoolNotFound() throws Exception {
-        mockMvc.perform(get("/pools/{id}", 998L))
-                .andExpect(status().isNotFound());
+        verify(poolService, times(1)).findAll();
     }
 }

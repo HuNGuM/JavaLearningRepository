@@ -63,7 +63,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
         manager.setUsersByUsernameQuery(
-                "select login, \"password\", true enabled " +
+                "select login, \"password\", true as enabled " +
                         "FROM employee WHERE login=?"
         );
         manager.setAuthoritiesByUsernameQuery(

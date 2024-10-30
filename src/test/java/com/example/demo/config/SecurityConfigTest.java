@@ -9,7 +9,7 @@ class SecurityConfigTest {
 
     @Test
     void passwordEncoder() {
-        String encoded = new BCryptPasswordEncoder().encode("12345");
+        String encoded = new BCryptPasswordEncoder().encode("adminadmin");
         System.out.println("encoded:" + encoded);
     }
 }
