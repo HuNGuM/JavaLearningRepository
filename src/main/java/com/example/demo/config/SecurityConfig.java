@@ -28,11 +28,11 @@ public class SecurityConfig {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
         manager.setUsersByUsernameQuery(
                 "select login, \"password\", true as enabled " +
-                        "FROM employees WHERE login=?"
+                        "FROM employee WHERE login=?"
         );
         manager.setAuthoritiesByUsernameQuery(
                 "select e.login, CONCAT('ROLE_', upper(rm.\"name\"))\n" +
-                        "  from employees e\n" +
+                        "  from employee e\n" +
                         "  join roles rm on e.role_id = rm.id\n" +
                         " WHERE e.login=?"
         );
@@ -64,8 +64,10 @@ public class SecurityConfig {
                         .requestMatchers("/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
                         .requestMatchers("/ui/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
                         .requestMatchers("/mobile/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers("/pools/{id}").hasAnyRole("ADMIN", "MANAGER") // Позволяем MANAGER доступ к отдельным бассейнам
+                        .requestMatchers("/pools").hasAnyRole("ADMIN", "MANAGER") // Позволяем MANAGER доступ ко всем бассейнам
                         .requestMatchers(HttpMethod.POST, "/employees").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/employees/{id}").hasRole("ADMIN")
                         .requestMatchers("/roles").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()

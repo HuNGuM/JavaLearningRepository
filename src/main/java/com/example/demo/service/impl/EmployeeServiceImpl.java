@@ -7,6 +7,7 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,15 +16,21 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeMapper employeeMapper;
     private EmployeeRepository employeeRepository;
+    private PasswordEncoder passwordEncoder; // Добавляем это поле
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeMapper employeeMapper, EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeMapper employeeMapper, EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
         this.employeeMapper = employeeMapper;
         this.employeeRepository = employeeRepository;
+        this.passwordEncoder = passwordEncoder; // Внедряем PasswordEncoder
     }
 
     @Override
     public EmployeeDTO create(EmployeeDTO employeeDTO) {
+        // Кодируем пароль перед созданием объекта Employee
+        String encodedPassword = passwordEncoder.encode(employeeDTO.getPassword());
+        employeeDTO.setPassword(encodedPassword); // Устанавливаем закодированный пароль
+
         Employee employee = employeeMapper.toEntity(employeeDTO);
         Employee employeeFromRepository = employeeRepository.save(employee);
         return employeeMapper.toDTO(employeeFromRepository);
