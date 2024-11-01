@@ -12,6 +12,11 @@
     </changeSet>
 
     <changeSet id="create-pools-table" author="Dell">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pools"/>
+            </not>
+        </preConditions>
         <createTable tableName="pools">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pools_pkey"/>

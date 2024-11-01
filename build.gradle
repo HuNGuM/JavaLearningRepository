@@ -60,6 +60,8 @@ dependencies {
 	// (Опционально) Зависимость для поддержки веб-безопасности
 	implementation 'org.springframework.security:spring-security-web'
 	implementation 'org.springframework.security:spring-security-config'
+	// https://mvnrepository.com/artifact/org.projectlombok/lombok
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.34'
 
 
 }

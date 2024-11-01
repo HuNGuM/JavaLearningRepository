@@ -1,19 +1,17 @@
 package com.example.demo.config;
 
-
-import com.example.demo.mapper.EmployeeMapper;
-import org.mapstruct.factory.Mappers;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -21,43 +19,9 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
+@Slf4j
 public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/employees").hasRole("ADMIN")
-                        .requestMatchers("/pools").permitAll()
-                        .requestMatchers("/roles").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /*@Bean
-    public UserDetailsService userDetailsService() throws Exception {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("admin")
-                .password(passwordEncoder().encode("p;lkjhgfds"))
-                .roles("ADMIN")
-                .build());
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("manager")
-                .password(passwordEncoder().encode("poiuytrew"))
-                .roles("MANAGER")
-                .build());
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("instructor")
-                .password(passwordEncoder().encode(".,mnbvcxz"))
-                .roles("INSTRUCTOR")
-                .build());
-        return manager;
-    }*/
 
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
@@ -67,12 +31,17 @@ public class SecurityConfig {
                         "FROM employee WHERE login=?"
         );
         manager.setAuthoritiesByUsernameQuery(
-                "select e.login, CONCAT('ROLE_', upper(r.\"name\"))\n" +
+                "select e.login, CONCAT('ROLE_', upper(rm.\"name\"))\n" +
                         "  from employee e\n" +
-                        "  join roles r on e.role_id = r.id\n" +
+                        "  join role_model rm on e.role_id = rm.id\n" +
                         " WHERE e.login=?"
         );
         return manager;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new Sha256PasswordEncoder();
     }
 
     @Bean
@@ -85,5 +54,24 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService(dataSource))
                 .passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/employees").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers("/ui/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers("/mobile/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers(HttpMethod.POST, "/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/employees").hasRole("ADMIN")
+                        .requestMatchers("/roles").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable());
+        return http.build();
     }
 }
