@@ -5,5 +5,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
     <include file="db/changelog/initial.xml"/>
-    <include file="/db/changelog/2024/10/2024-10-30_add_not_null_constraints_pools.xml.xml"/>
+    <include file="db/changelog/2024/10/30-01-clients_table_dropped.xml"/>
+    <include file="db/changelog/2024/11/2024-11-1_create_reservation_table.xml"/>
 </databaseChangeLog>
