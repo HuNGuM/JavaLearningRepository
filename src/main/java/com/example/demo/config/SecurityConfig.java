@@ -28,12 +28,12 @@ public class SecurityConfig {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
         manager.setUsersByUsernameQuery(
                 "select login, \"password\", true as enabled " +
-                        "FROM employee WHERE login=?"
+                        "FROM employees WHERE login=?"
         );
         manager.setAuthoritiesByUsernameQuery(
                 "select e.login, CONCAT('ROLE_', upper(rm.\"name\"))\n" +
-                        "  from employee e\n" +
-                        "  join role_model rm on e.role_id = rm.id\n" +
+                        "  from employees e\n" +
+                        "  join roles rm on e.role_id = rm.id\n" +
                         " WHERE e.login=?"
         );
         return manager;
@@ -61,6 +61,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/employees").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers("/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
                         .requestMatchers("/ui/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
                         .requestMatchers("/mobile/employees/{id}").hasAnyRole("ADMIN", "DISPATCHER")
                         .requestMatchers(HttpMethod.POST, "/employees").hasRole("ADMIN")
