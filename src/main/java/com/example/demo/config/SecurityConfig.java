@@ -28,11 +28,11 @@ public class SecurityConfig {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
         manager.setUsersByUsernameQuery(
                 "select login, \"password\", true as enabled " +
-                        "FROM employee WHERE login=?"
+                        "FROM employees WHERE login=?"
         );
         manager.setAuthoritiesByUsernameQuery(
                 "select e.login, CONCAT('ROLE_', upper(rm.\"name\"))\n" +
-                        "  from employee e\n" +
+                        "  from employees e\n" +
                         "  join roles rm on e.role_id = rm.id\n" +
                         " WHERE e.login=?"
         );
