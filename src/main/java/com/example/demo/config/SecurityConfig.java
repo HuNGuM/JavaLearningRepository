@@ -41,24 +41,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /*@Bean
-    public UserDetailsService userDetailsService() throws Exception {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("admin")
-                .password(passwordEncoder().encode("p;lkjhgfds"))
-                .roles("ADMIN")
-                .build());
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("manager")
-                .password(passwordEncoder().encode("poiuytrew"))
-                .roles("MANAGER")
-                .build());
-        manager.createUser(org.springframework.security.core.userdetails.User.withUsername("instructor")
-                .password(passwordEncoder().encode(".,mnbvcxz"))
-                .roles("INSTRUCTOR")
-                .build());
-        return manager;
-    }*/
-
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
