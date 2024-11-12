@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "clients")
 public class Client {
@@ -20,5 +22,6 @@ public class Client {
     private Long login;
     @Column(name = "password", length = 90, nullable = false)
     private Long password;
-
+    @Column(name = "foreign_id", nullable = false)
+    private UUID foreignId;  // Foreign key as UUID
 }
