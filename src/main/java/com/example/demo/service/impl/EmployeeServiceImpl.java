@@ -9,6 +9,15 @@ import com.example.demo.kafka.KafkaProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.demo.dto.EmployeeDTO;
+import com.example.demo.entity.Employee;
+import com.example.demo.mapper.EmployeeMapper;
+import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.service.EmployeeService;
+import com.example.demo.kafka.KafkaProducerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,14 +26,14 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeMapper employeeMapper;
     private EmployeeRepository employeeRepository;
-    private PasswordEncoder passwordEncoder; // Добавляем это поле
+    private PasswordEncoder passwordEncoder;
     private KafkaProducerService kafkaProducerService;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeMapper employeeMapper, EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+    public EmployeeServiceImpl(EmployeeMapper employeeMapper, EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, KafkaProducerService kafkaProducerService) {
         this.employeeMapper = employeeMapper;
         this.employeeRepository = employeeRepository;
-        this.passwordEncoder = passwordEncoder; // Внедряем PasswordEncoder
+        this.passwordEncoder = passwordEncoder;
         this.kafkaProducerService = kafkaProducerService;
     }
 
@@ -32,11 +41,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO create(EmployeeDTO employeeDTO) {
         // Кодируем пароль перед созданием объекта Employee
         String encodedPassword = passwordEncoder.encode(employeeDTO.getPassword());
-        employeeDTO.setPassword(encodedPassword); // Устанавливаем закодированный пароль
+        employeeDTO.setPassword(encodedPassword);
 
         Employee employee = employeeMapper.toEntity(employeeDTO);
-        Employee employeeFromRepository = employeeRepository.save(employee);
-        return employeeMapper.toDTO(employeeFromRepository);
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // Отправка сообщения в Kafka после создания сотрудника
+        String employeeMessage = "New employee created: " + savedEmployee.getFio();
+        kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
+
+        return employeeMapper.toDTO(savedEmployee);
     }
 
     @Override
