@@ -1,6 +1,0 @@
-logging:
-  level:
-    root: INFO
-    org.springframework: DEBUG
-  file:
-    name: spring-application.log
