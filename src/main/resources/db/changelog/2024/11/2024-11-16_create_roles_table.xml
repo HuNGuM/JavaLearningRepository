@@ -12,21 +12,18 @@
             </not>
         </preConditions>
         <createTable tableName="roles">
-            <column name="id" type="BIGINT">
+            <column name="id" type="SERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
         </createTable>
         <insert tableName="roles">
-            <column name="id" value="1"/>
             <column name="name" value="INSTRUCTOR"/>
         </insert>
         <insert tableName="roles">
-            <column name="id" value="2"/>
             <column name="name" value="MANAGER"/>
         </insert>
         <insert tableName="roles">
-            <column name="id" value="4"/>
             <column name="name" value="ADMIN"/>
         </insert>
     </changeSet>

@@ -1,40 +1,55 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
+
 import com.example.demo.dto.PoolDTO;
 import com.example.demo.entity.Pool;
 import com.example.demo.mapper.PoolMapper;
 import com.example.demo.repository.PoolRepository;
-import com.example.demo.service.PoolService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-@DataJpaTest
-@Import({PoolServiceImpl.class, PoolMapper.class})
-public class PoolServiceImplTest {
-
+@SpringBootTest
+public class PoolServiceTest {
     @Autowired
-    private PoolServiceImpl poolService;
 
+    private PoolService poolService;
     @Autowired
     private PoolRepository poolRepository;
 
-    @Autowired
-    private PoolMapper poolMapper;
+    private PoolMapper poolMapper = new PoolMapper() {
+        @Override
+        public PoolDTO toDTO(Pool pool) {
+            return null;
+        }
+
+        @Override
+        public Pool toEntity(PoolDTO poolDTO) {
+            return null;
+        }
+
+        @Override
+        public List<PoolDTO> toDTOList(List<Pool> poolList) {
+            return null;
+        }
+
+        @Override
+        public List<Pool> toEntityList(List<PoolDTO> poolDTOList) {
+            return null;
+        }
+    };
+
     @BeforeEach
     void setup() {
         // Очистить базу перед каждым тестом
         poolRepository.deleteAll();
 
         // Добавить несколько записей для тестов
-        poolRepository.save(new Pool(null, "Pool A", "Location A", 5, "8:00-20:00"));
+        poolRepository.save(new Pool(null, "Pool A", "Location A", 8, "10:00-18:00"));
         poolRepository.save(new Pool(null, "Pool B", "Location B", 10, "9:00-22:00"));
     }
 

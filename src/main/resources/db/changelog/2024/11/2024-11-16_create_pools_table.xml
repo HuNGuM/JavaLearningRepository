@@ -12,7 +12,7 @@
             </not>
         </preConditions>
         <createTable tableName="pools">
-            <column name="id" type="BIGINT">
+            <column name="id" type="SERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="lanes" type="INTEGER"/>
