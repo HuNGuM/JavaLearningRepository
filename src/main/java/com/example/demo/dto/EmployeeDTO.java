@@ -1,21 +1,23 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.Role;
+
 import java.util.Objects;
 
 public class EmployeeDTO {
     private long id;
     private String fio;
-    private int role_id;
+    private Role role;
     private String login;
     private String password;
 
     public EmployeeDTO() {
     }
 
-    public EmployeeDTO(long id, String fio, int role_id, String login, String password) {
+    public EmployeeDTO(long id, String fio, Role role, String login, String password) {
         this.id = id;
         this.fio = fio;
-        this.role_id = role_id;
+        this.role = role;
         this.login = login;
         this.password = password;
     }
@@ -36,12 +38,12 @@ public class EmployeeDTO {
         this.fio = fio;
     }
 
-    public int getRole_id() {
-        return role_id;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRole_id(int role_id) {
-        this.role_id = role_id;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getLogin() {
@@ -64,11 +66,11 @@ public class EmployeeDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EmployeeDTO that)) return false;
-        return id == that.id && role_id == that.role_id && Objects.equals(fio, that.fio) && Objects.equals(login, that.login) && Objects.equals(password, that.password);
+        return id == that.id && Objects.equals(fio, that.fio) && Objects.equals(role, that.role) && Objects.equals(login, that.login) && Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fio, role_id, login, password);
+        return Objects.hash(id, fio, role, login, password);
     }
 }

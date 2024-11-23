@@ -52,23 +52,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.toDTO(savedEmployee);
     }
-
-    @Override
+@Override
     public EmployeeDTO update(EmployeeDTO employeeDTO, Long id) {
+        // Получаем существующего сотрудника
         Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found emloyee with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Not found employee with id: " + id));
+
+        // Обновляем данные сотрудника
         existingEmployee.setFio(employeeDTO.getFio());
-        existingEmployee.setRole_id(employeeDTO.getRole_id());
+        existingEmployee.setRole(employeeDTO.getRole());  // Здесь предполагаем, что роль передается как сущность
         existingEmployee.setLogin(employeeDTO.getLogin());
         existingEmployee.setPassword(employeeDTO.getPassword());
+
+        // Сохраняем обновленного сотрудника
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
 
-        // Отправка сообщения в Kafka после добавления сотрудника
-        String employeeMessage = "New employee created: " + updatedEmployee.getFio();
-        kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
+        // Отправляем сообщение в Kafka, если обновление прошло успешно
+// Отправка сообщения в Kafka после добавления сотрудника
+    String employeeMessage = "New employee created: " + updatedEmployee.getFio();
+    kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
 
-        return employeeMapper.toDTO(updatedEmployee);
-    }
+    return employeeMapper.toDTO(updatedEmployee);
+}
 
     @Override
     public void delete(Long id) {
