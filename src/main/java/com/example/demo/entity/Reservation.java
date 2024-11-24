@@ -14,7 +14,7 @@ import java.util.Objects;
 @Table(name = "reservations")
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "client_id", length = 90, nullable = false, unique = true)
