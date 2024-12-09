@@ -15,10 +15,10 @@ public class Client {
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "fio", length = 90, nullable = false)
-    private Long fio;
+    private String fio;
     @Column(name = "login", length = 90, nullable = false, unique = true)
-    private Long login;
+    private String login;
     @Column(name = "password", length = 90, nullable = false)
-    private Long password;
+    private String password;
 
 }
