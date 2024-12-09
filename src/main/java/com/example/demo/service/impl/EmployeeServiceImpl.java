@@ -48,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Отправка сообщения в Kafka после создания сотрудника
         String employeeMessage = "New employee created: " + savedEmployee.getFio();
-//        kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
+        kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
 
         return employeeMapper.toDTO(savedEmployee);
     }
@@ -70,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Отправляем сообщение в Kafka, если обновление прошло успешно
 // Отправка сообщения в Kafka после добавления сотрудника
     String employeeMessage = "New employee created: " + updatedEmployee.getFio();
-//    kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
+    kafkaProducerService.sendEmployeeCreatedMessage(employeeMessage);
 
     return employeeMapper.toDTO(updatedEmployee);
 }
