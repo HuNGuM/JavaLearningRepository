@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class Sha256PasswordEncoderTest {
     @Test
     public void returnTest(){
-        String rawPassword = "manager"; // пароль для шифрования
+        String rawPassword = "admin"; // пароль для шифрования
         Sha256PasswordEncoder encoder = new Sha256PasswordEncoder();
         String encodedPassword = encoder.encode(rawPassword);
         System.out.println(encodedPassword); // Вывод закодированного пароля

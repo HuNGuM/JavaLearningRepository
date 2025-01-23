@@ -1,0 +1,5 @@
+V3__create_clients_table.sql
+V7__create_roles_table.sql
+V4__create_employees_table.sql
+V5__create_pools_table.sql
+V6__create_reservations_table.sql
