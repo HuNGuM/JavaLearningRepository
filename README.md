@@ -13,6 +13,7 @@ The service defines 3 roles:
 - Hibernate
 
 # Using my LiquibaseClone
+- Configure DatabaseConnection class
 - Start the MigrationMain class
 - Ensure all the scripts have been applied
 - Start the JavaLearningApplication
