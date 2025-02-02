@@ -11,3 +11,9 @@ The service defines 3 roles:
 - Postgres
 - Kafka
 - Hibernate
+
+# Using my LiquibaseClone
+- Start the MigrationMain class
+- Ensure all the scripts have been applied
+- Start the JavaLearningApplication
+- Use Postman (or any other tool) to test some requests (ensure employee with "Administrator" rights has been added to "employees" table)
