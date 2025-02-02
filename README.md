@@ -11,3 +11,5 @@ The service defines 3 roles:
 - Postgres
 - Kafka
 - Hibernate
+
+# For LiquibaseClone please checkout to feature/liquibase-clone-add branch
